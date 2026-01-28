@@ -1,0 +1,23 @@
+version: "3.8"
+services:
+  neon-systems:
+    image: johnpauloramil187/official-neon-systems:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      labels:
+        - "traefik.enable=true"
+        - "traefik.constraint-label=traefik-public"
+        - "traefik.http.routers.neonsystems.rule=Host(`www.neonsystems.net`) || Host(`neonsystems.net`)"
+        - "traefik.http.routers.neonsystems.entrypoints=websecure"
+        - "traefik.http.routers.neonsystems.tls.certresolver=letsencrypt"
+        - "traefik.http.services.neonsystems.loadbalancer.server.port=5173"
+        - "traefik.docker.network=traefik-public"
+    networks:
+      - traefik-public
+
+networks:
+  traefik-public:
+    external: true
+    name: traefik-public
