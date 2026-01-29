@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  chatterloop-user-api:
+    image: johnpauloramil187/chatterloop_user_api:latest
+    env_file:
+      - ./envs/chatterloop-client-env.env
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      labels:
+        - "traefik.enable=true"
+        - "traefik.constraint-label=traefik-public"
+        - "traefik.http.routers.chatterloopuserapi.rule=Host(`user.chatterloop.app`)"
+        - "traefik.http.routers.chatterloopuserapi.entrypoints=websecure"
+        - "traefik.http.routers.chatterloopuserapi.tls.certresolver=letsencrypt"
+        - "traefik.http.services.chatterloopuserapi.loadbalancer.server.port=8003"
+        - "traefik.docker.network=traefik-public"
+    networks:
+      - traefik-public
+
+networks:
+  traefik-public:
+    external: true
+    name: traefik-public
