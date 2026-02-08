@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  cron-manager:
+    image: crazymax/swarm-cronjob:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      labels:
+        - "swarm.cronjob.enable=true"
+
+  post-scores-cron:
+    image: johnpauloramil187/chatterloop_cron_service:latest
+    build: .
+    deploy:
+      replicas: 0
+      restart_policy:
+        condition: none
+      labels:
+        - "swarm.cronjob.enable=true"
+        - "swarm.cronjob.schedule=0 */3 * * *"
+        - "swarm.cronjob.skip-running=true"
+    command: ["python", "post_scores_cron.py"]
