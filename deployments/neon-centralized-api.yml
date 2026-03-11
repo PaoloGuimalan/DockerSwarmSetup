@@ -17,6 +17,14 @@ services:
     networks:
       - traefik-public
 
+  neon-worker:
+    image: johnpauloramil187/neon_centralized_api:latest
+    command: celery -A neon worker --loglevel=info --concurrency=2
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
 networks:
   traefik-public:
     external: true
