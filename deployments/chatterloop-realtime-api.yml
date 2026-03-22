@@ -2,8 +2,9 @@ version: "3.8"
 services:
   chatterloop-realtime-api:
     image: johnpauloramil187/chatterloop_api:latest
-    env_file:
-      - ./envs/chatterloop-client-env.env
+    secrets:
+      - source: chatterloop-realtime-api_env
+        target: /app/.env
     deploy:
       replicas: 1
       restart_policy:
@@ -23,3 +24,7 @@ networks:
   traefik-public:
     external: true
     name: traefik-public
+
+secrets:
+  chatterloop-realtime-api_env:
+    external: true
