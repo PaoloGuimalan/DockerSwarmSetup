@@ -2,6 +2,8 @@ version: "3.8"
 services:
   chatterloop-realtime-api:
     image: johnpauloramil187/chatterloop_api:latest
+    ports:
+      - "10000-10100:10000-10100/udp"
     secrets:
       - source: chatterloop-realtime-api_env
         target: /app/.env
