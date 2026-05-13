@@ -18,9 +18,22 @@ services:
         - "traefik.http.services.mailserver-certs.loadbalancer.server.port=993"
         - "traefik.docker.network=traefik-public"
     ports:
-      - "25:25" # SMTP (Incoming Mail from other servers)
-      - "587:587" # SMTP (Outgoing Mail from Outlook - STARTTLS)
-      - "465:465" # SMTP (Outgoing Mail from Outlook - SSL/TLS)
+      # SMTP (Incoming Mail from other servers) - Bypasses Swarm Mesh to reveal real IPs
+      - target: 25
+        published: 25
+        protocol: tcp
+        mode: host
+      # SMTP (Outgoing Mail - STARTTLS) - Bypasses Swarm Mesh to reveal real IPs
+      - target: 587
+        published: 587
+        protocol: tcp
+        mode: host
+      # SMTP (Outgoing Mail - SSL/TLS) - Bypasses Swarm Mesh to reveal real IPs
+      - target: 465
+        published: 465
+        protocol: tcp
+        mode: host
+      # IMAP traffic (Standard mapping remains unchanged)
       - "993:993" # IMAP (Incoming Mail for Outlook - REQUIRED)
     volumes:
       - /data/mailserver-data:/var/mail
@@ -29,13 +42,14 @@ services:
       - /data/mailserver-certs:/etc/letsencrypt:ro
     environment:
       - DMS_DEBUG=0
-      - PERMIT_DOCKER=host
+      - PERMIT_DOCKER=none
       - POSTMASTER_ADDRESS=postmaster@neonsystems.net
       - ENABLE_AMAVIS=0
       - ENABLE_CLAMAV=0
       - ENABLE_SPAMASSASSIN=0
       - OVERRIDE_HOSTNAME=mail.neonsystems.net
       - SSL_TYPE=manual
+      - SPOOF_PROTECTION=1
       # Point to the certificate folder that already exists (neonsystems.net)
       - SSL_CERT_PATH=/etc/letsencrypt/mail.neonsystems.net/fullchain.pem
       - SSL_KEY_PATH=/etc/letsencrypt/mail.neonsystems.net/privkey.pem
