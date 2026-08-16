@@ -1,0 +1,30 @@
+version: "3.8"
+services:
+  chatterloop-worker-service:
+    image: johnpauloramil187/chatterloop_worker_service:latest
+    secrets:
+      - source: chatterloop-worker-service_env
+        target: /app/.env
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      labels:
+        - "traefik.enable=true"
+        - "traefik.constraint-label=traefik-public"
+        - "traefik.http.routers.chatterloopworkerservice.rule=Host(`worker.chatterloop.app`)"
+        - "traefik.http.routers.chatterloopworkerservice.entrypoints=websecure"
+        - "traefik.http.routers.chatterloopworkerservice.tls.certresolver=letsencrypt"
+        - "traefik.http.services.chatterloopworkerservice.loadbalancer.server.port=8880"
+        - "traefik.docker.network=traefik-public"
+    networks:
+      - traefik-public
+
+networks:
+  traefik-public:
+    external: true
+    name: traefik-public
+
+secrets:
+  chatterloop-worker-service_env:
+    external: true
