@@ -1,10 +1,14 @@
 version: "3.8"
 services:
   chatterloop-user-api:
-    image: johnpauloramil187/chatterloop_user_api:latest
+    image: johnpauloramil187/chatterloop_user_api:${IMAGE_TAG:-latest}
     secrets:
       - source: chatterloop-user-api_env
         target: /app/.env
+      - source: astra_bundle
+        target: /app/secure-connect-chatterloop.zip
+    environment:
+      - APP_VERSION=${IMAGE_TAG:-latest}
     deploy:
       replicas: 1
       restart_policy:
@@ -27,4 +31,6 @@ networks:
 
 secrets:
   chatterloop-user-api_env:
+    external: true
+  astra_bundle:
     external: true

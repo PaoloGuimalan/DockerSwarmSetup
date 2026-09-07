@@ -1,12 +1,16 @@
 version: "3.8"
 services:
   chatterloop-realtime-api:
-    image: johnpauloramil187/chatterloop_api:latest
+    image: johnpauloramil187/chatterloop_api:${IMAGE_TAG:-latest}
     ports:
       - "10000-10799:10000-10799/udp"
     secrets:
       - source: chatterloop-realtime-api_env
         target: /app/.env
+      - source: astra_bundle
+        target: /app/secure-connect-chatterloop.zip
+    environment:
+      - APP_VERSION=${IMAGE_TAG:-latest}
     deploy:
       replicas: 1
       restart_policy:
@@ -29,4 +33,6 @@ networks:
 
 secrets:
   chatterloop-realtime-api_env:
+    external: true
+  astra_bundle:
     external: true

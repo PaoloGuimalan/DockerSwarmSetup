@@ -1,10 +1,12 @@
 version: "3.8"
 services:
   chatterloop-developer-service:
-    image: johnpauloramil187/chatterloop_developer_service:latest
+    image: johnpauloramil187/chatterloop_developer_service:${IMAGE_TAG:-latest}
     secrets:
       - source: chatterloop-developer-service_env
         target: /app/.env
+    environment:
+      - APP_VERSION=${IMAGE_TAG:-latest}
     deploy:
       replicas: 1
       restart_policy:
