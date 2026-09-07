@@ -1,9 +1,11 @@
 version: "3.8"
 services:
   chatterloop-web:
-    image: johnpauloramil187/chatterloop_web:latest
+    image: johnpauloramil187/chatterloop_web:${IMAGE_TAG:-latest}
     env_file:
-      - ./envs/chatterloop-client-env.env
+      - ../secrets/chatterloop-web.env
+    environment:
+      - VITE_APP_VERSION=${IMAGE_TAG:-latest}
     deploy:
       replicas: 1
       restart_policy:
@@ -23,3 +25,7 @@ networks:
   traefik-public:
     external: true
     name: traefik-public
+
+secrets:
+  chatterloop-web_env:
+    external: true
