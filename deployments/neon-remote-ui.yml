@@ -2,8 +2,14 @@ version: "3.8"
 services:
   neon-remote:
     image: johnpauloramil187/neonremote-ui:latest
+    secrets:
+      - source: neon-remote_env
+        target: /app/.env
     deploy:
       replicas: 1
+      update_config:
+        order: start-first
+        failure_action: rollback
       restart_policy:
         condition: on-failure
       labels:
@@ -21,3 +27,7 @@ networks:
   traefik-public:
     external: true
     name: traefik-public
+
+secrets:
+  neon-remote_env:
+    external: true

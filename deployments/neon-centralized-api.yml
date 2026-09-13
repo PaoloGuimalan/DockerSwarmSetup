@@ -2,8 +2,14 @@ version: "3.8"
 services:
   neon-centralized-api:
     image: johnpauloramil187/neon_centralized_api:latest
+    secrets:
+      - source: neon-centralized-api_env
+        target: /app/.env
     deploy:
       replicas: 1
+      update_config:
+        order: start-first
+        failure_action: rollback
       restart_policy:
         condition: on-failure
       labels:
@@ -19,9 +25,26 @@ services:
 
   neon-worker:
     image: johnpauloramil187/neon_centralized_api:latest
+    secrets:
+      - source: neon-centralized-api_env
+        target: /app/.env
     command: celery -A neon worker --loglevel=info --concurrency=2
     deploy:
       replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  neon-bots:
+    image: johnpauloramil187/neon_centralized_api:latest
+    secrets:
+      - source: neon-centralized-api_env
+        target: /app/.env
+    command: python manage.py runbots
+    stop_grace_period: 40s
+    deploy:
+      replicas: 1
+      update_config:
+        order: stop-first
       restart_policy:
         condition: on-failure
 
@@ -29,3 +52,7 @@ networks:
   traefik-public:
     external: true
     name: traefik-public
+
+secrets:
+  neon-centralized-api_env:
+    external: true
