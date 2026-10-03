@@ -36,3 +36,16 @@ services:
         - "swarm.cronjob.schedule=0 */3 * * *"
         - "swarm.cronjob.skip-running=true"
     command: ["python", "interest_trending_cron.py"]
+
+  chatterloop-media-cleanup:
+    image: johnpauloramil187/chatterloop_media_cleanup:latest
+    build: .
+    deploy:
+      replicas: 0
+      restart_policy:
+        condition: none
+      labels:
+        - "swarm.cronjob.enable=true"
+        - "swarm.cronjob.schedule=0 */3 * * *"
+        - "swarm.cronjob.skip-running=true"
+    command: ["python", "media_cleanup_cron.py", "--apply"]
