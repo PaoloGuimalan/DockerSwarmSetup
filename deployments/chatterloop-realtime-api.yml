@@ -24,6 +24,12 @@ services:
         - "traefik.http.routers.chatterlooprealtimeapi.rule=Host(`realtime.chatterloop.app`)"
         - "traefik.http.routers.chatterlooprealtimeapi.entrypoints=websecure"
         - "traefik.http.routers.chatterlooprealtimeapi.tls.certresolver=letsencrypt"
+        - "traefik.http.routers.chatterlooprealtimeapi-gw.rule=Host(`api.chatterloop.app`) && (Path(`/rt`) || PathPrefix(`/rt/`))"
+        - "traefik.http.routers.chatterlooprealtimeapi-gw.entrypoints=websecure"
+        - "traefik.http.routers.chatterlooprealtimeapi-gw.tls.certresolver=letsencrypt"
+        - "traefik.http.routers.chatterlooprealtimeapi-gw.middlewares=chatterlooprealtimeapi-strip"
+        - "traefik.http.routers.chatterlooprealtimeapi-gw.service=chatterlooprealtimeapi"
+        - "traefik.http.middlewares.chatterlooprealtimeapi-strip.stripprefix.prefixes=/rt"
         - "traefik.http.services.chatterlooprealtimeapi.loadbalancer.server.port=3001"
         - "traefik.docker.network=traefik-public"
     networks:
