@@ -9,6 +9,7 @@ services:
         target: /app/secure-connect-chatterloop.zip
     environment:
       - APP_VERSION=${IMAGE_TAG:-latest}
+      - FORCE_SCRIPT_NAME=/us
     deploy:
       replicas: 1
       update_config:
