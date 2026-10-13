@@ -5,7 +5,7 @@ services:
     env_file:
       - ../secrets/chatterloop-web.env
     environment:
-      - VITE_APP_VERSION=${IMAGE_TAG:-latest}
+      - VITE_PUBLIC_APP_VERSION=${IMAGE_TAG:-latest}
     deploy:
       replicas: 1
       update_config:
